@@ -37,7 +37,7 @@ public class MeditationParser {
 
            Matcher entryMatcher = ENTRY_PATTERN.matcher(trimmed);
            if(entryMatcher.matches()){
-               //
+               /// ///
            }
        }
 
