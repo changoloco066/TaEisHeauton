@@ -31,16 +31,33 @@ public class MeditationParser {
            String trimmed = line.trim();
 
            Matcher bookMatcher = BOOK_PATTERN.matcher(trimmed);
-           if(bookMatcher.matches()){
-               //
-           }
-
            Matcher entryMatcher = ENTRY_PATTERN.matcher(trimmed);
-           if(entryMatcher.matches()){
-               /// ///
-           }
-       }
 
+           if(bookMatcher.matches()){
+               if(state == ParserState.INSIDE_ENTRY){
+                   Meditation meditation = new Meditation(currentBook, currentNumber, currentText.toString());
+                   meditations.add(meditation);
+               }
+               currentBook = 0; // Placeholder, esta pendiente romanToInt(bookMatcher.group(1))
+               state = ParserState.INSIDE_BOOK;
+           } else if (entryMatcher.matches()){
+               if(state == ParserState.INSIDE_ENTRY){
+                   Meditation meditation = new Meditation(currentBook, currentNumber, currentText.toString());
+                   meditations.add(meditation);
+               }
+                   currentNumber = Integer.parseInt(entryMatcher.group(1));
+                   currentText = new StringBuilder(entryMatcher.group(2));
+                   state = ParserState.INSIDE_ENTRY;
+           } else if (state == ParserState.INSIDE_ENTRY && !trimmed.isEmpty()){
+               currentText.append(trimmed).append(" ");
+
+           }
+
+       }
+        if(state == ParserState.INSIDE_ENTRY) {
+            Meditation meditation = new Meditation(currentBook, currentNumber, currentText.toString());
+            meditations.add(meditation);
+        }
         return meditations;
     }
 }
