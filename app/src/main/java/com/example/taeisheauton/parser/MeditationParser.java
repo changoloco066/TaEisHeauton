@@ -1,6 +1,8 @@
 package com.example.taeisheauton.parser;
 
 import com.example.taeisheauton.model.Meditation;
+import com.example.taeisheauton.util.RomanNumeralConverter;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -14,7 +16,7 @@ public class MeditationParser {
     private List<Meditation> meditations;
 
     private static final Pattern BOOK_PATTERN = Pattern.compile("Libro\\s+([IVXL]+)");
-    private static final Pattern ENTRY_PATTERN = Pattern.compile("(\\d+)\\.\\-?\\s+(.+)");
+    private static final Pattern ENTRY_PATTERN = Pattern.compile("(\\d+)\\.\\s*\\-?\\s+(.+)");
     public MeditationParser(){
         meditations = new ArrayList<>();
     }
@@ -38,7 +40,7 @@ public class MeditationParser {
                    Meditation meditation = new Meditation(currentBook, currentNumber, currentText.toString());
                    meditations.add(meditation);
                }
-               currentBook = 0; // Placeholder, esta pendiente romanToInt(bookMatcher.group(1))
+               currentBook = RomanNumeralConverter.toInt(bookMatcher.group(1));
                state = ParserState.INSIDE_BOOK;
            } else if (entryMatcher.matches()){
                if(state == ParserState.INSIDE_ENTRY){

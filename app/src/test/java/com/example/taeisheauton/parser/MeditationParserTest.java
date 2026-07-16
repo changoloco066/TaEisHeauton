@@ -1,5 +1,5 @@
 package com.example.taeisheauton.parser;
-
+import static org.junit.Assert.assertEquals;
 import com.example.taeisheauton.model.Meditation;
 import org.junit.Test;
 import java.util.List;
@@ -14,7 +14,7 @@ public class MeditationParserTest {
                         "15. - Del estoico claudia máximo\n" +
                         "Uno debe de ser dueño de si mismo, sin dejarse jamás arrastrar de las ocasiones.\n" +
                         "\n" +
-                        "Libro ll\n" +
+                        "Libro II\n" +
                         "\n" +
                         "10.-  Un desorden cometido por gusto era mayor delito que otro hecho con dolor\n" +
                         "\n" +

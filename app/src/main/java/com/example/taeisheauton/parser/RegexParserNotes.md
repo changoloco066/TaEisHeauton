@@ -44,12 +44,15 @@ Matches lines like `"Libro I"`, `"Libro VIII"`, `"Libro  VII"` (tolerates extra 
 ### `ENTRY_PATTERN` — detects the start of a numbered meditation
 
 ```java
-Pattern.compile("(\\d+)\\.\\-?\\s+(.+)")
+Pattern.compile("(\\d+)\\.\\s*\\-?\\s+(.+)")
 ```
 
-Matches lines like `"22.- text"`, `"15. - text"`, `"3.- No malogres..."`.
+Matches lines like `"22.- text"`, `"15. - text"` (space before the dash), `"3.- No malogres..."`.
 - `group(1)` → the entry number (e.g. `"22"`).
 - `group(2)` → the text that follows on that same line.
+  Note the two different whitespace quantifiers around the optional dash:
+- `\\.\\s*\\-?` — **zero or more** spaces between the period and the dash, since some entries have no space there (`"22.-"`) and others do (`"15. -"`).
+- `\\-?\\s+` — **one or more** spaces required between the dash (or period, if no dash) and the text itself, since that separator is always present.
 
 ## Important detail: `trim()` before matching
 
