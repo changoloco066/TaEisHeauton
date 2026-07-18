@@ -17,7 +17,7 @@ com/example/taeisheauton/
 │   ├── ParserState.java      — enum for the parser's state machine
 │   └── MeditationParser.java — line-by-line state machine parser
 ├── util/           → RomanNumeralConverter.java — roman numeral to int conversion
-├── data/           → (planned) Room database, DAO — persistence layer
+├── data/           → Room persistence: MeditationEntity, MeditationDao, AppDatabase
 ├── widget/         → (planned) AppWidgetProvider, RemoteViews layout, update logic
 └── ui/             → (planned) MainActivity — screen to paste/import raw text
 ```
@@ -47,7 +47,11 @@ Libro II
 - [x] `MeditationParser` state machine (line splitting, book detection, entry detection, multi-paragraph accumulation)
 - [x] Roman numeral → int conversion (`RomanNumeralConverter`, in `util/`)
 - [x] Verified with a JUnit test (real assertions, not just prints) against real sample text
-- [ ] Room persistence layer
+- [x] Room dependency added (Gradle Version Catalog)
+- [x] `MeditationEntity` — separate from `Meditation`, keeps the domain model persistence-agnostic
+- [x] `MeditationDao` (insertAll, deleteAll, getRandom, count)
+- [x] `AppDatabase` (singleton, wires entity + DAO together) — written, not yet tested
+- [ ] Wire parser → entities → Room from `MainActivity`
 - [ ] `AppWidgetProvider` + `RemoteViews` layout
 - [ ] Daily update scheduling (`WorkManager`)
 - [ ] Import screen (`MainActivity`)
