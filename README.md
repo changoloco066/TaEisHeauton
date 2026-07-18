@@ -22,8 +22,6 @@ com/example/taeisheauton/
 └── ui/             → (planned) MainActivity — screen to paste/import raw text
 ```
 
-Each package has a single responsibility, mirroring the structure used in [DukeQuill](../dukequill), an earlier Java spell-checker project.
-
 ## How the parser works
 
 Source text is structured like this:
