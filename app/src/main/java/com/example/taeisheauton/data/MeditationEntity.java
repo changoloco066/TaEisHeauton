@@ -12,6 +12,10 @@ public class MeditationEntity{
     public int number;
     public String text;
 
+    public MeditationEntity(){
+
+    }
+
     public MeditationEntity(Meditation m){
         this.book = m.getBook();
         this.number = m.getNumber();

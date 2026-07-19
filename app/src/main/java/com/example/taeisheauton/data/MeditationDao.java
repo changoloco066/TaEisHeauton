@@ -15,7 +15,7 @@ public interface MeditationDao {
     @Query("DELETE FROM meditations")
     void deleteAll();
 
-    @Query("SELECT * FROM meditation ORDER BY RANDOM() LIMIT 1")
+    @Query("SELECT * FROM meditations ORDER BY RANDOM() LIMIT 1")
     MeditationEntity getRandom();
 
     @Query("SELECT COUNT(*) FROM meditations")
