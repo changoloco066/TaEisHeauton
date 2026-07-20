@@ -19,8 +19,10 @@ com/example/taeisheauton/
 ├── util/           → RomanNumeralConverter.java — roman numeral to int conversion
 ├── data/           → Room persistence: MeditationEntity, MeditationDao, AppDatabase
 ├── widget/         → (planned) AppWidgetProvider, RemoteViews layout, update logic
-└── ui/             → (planned) MainActivity — screen to paste/import raw text
+└── ui/             → MainActivity.java — paste raw text, parse, persist to Room
 ```
+
+Each package has a single responsibility, mirroring the structure used in [DukeQuill](../dukequill), an earlier Java spell-checker project.
 
 ## How the parser works
 
@@ -48,11 +50,10 @@ Libro II
 - [x] Room dependency added (Gradle Version Catalog)
 - [x] `MeditationEntity` — separate from `Meditation`, keeps the domain model persistence-agnostic
 - [x] `MeditationDao` (insertAll, deleteAll, getRandom, count)
-- [x] `AppDatabase` (singleton, wires entity + DAO together) — written, not yet tested
-- [ ] Wire parser → entities → Room from `MainActivity`
+- [x] `AppDatabase` (singleton, wires entity + DAO together) — verified with an instrumented test on the emulator
+- [x] `MainActivity` — paste raw text, parse it, persist it to Room, confirm via Toast (verified end-to-end on the emulator)
 - [ ] `AppWidgetProvider` + `RemoteViews` layout
 - [ ] Daily update scheduling (`WorkManager`)
-- [ ] Import screen (`MainActivity`)
 
 ## Requirements
 
