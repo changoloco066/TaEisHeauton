@@ -63,6 +63,4 @@ Libro II
 
 - Android Studio
 - Java (Empty Views Activity template — no Compose, no Kotlin)
-- Min SDK 24 (Android 7.0 Nougat) 
-
-XD
+- Min SDK 24 (Android 7.0 Nougat)
