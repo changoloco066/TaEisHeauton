@@ -18,7 +18,8 @@ com/example/taeisheauton/
 │   └── MeditationParser.java — line-by-line state machine parser
 ├── util/           → RomanNumeralConverter.java — roman numeral to int conversion
 ├── data/           → Room persistence: MeditationEntity, MeditationDao, AppDatabase
-├── widget/         → (planned) AppWidgetProvider, RemoteViews layout, update logic
+├── widget/         → MeditationWidgetProvider.java — reads a random meditation
+│                      from Room and updates the widget via RemoteViews
 └── ui/             → MainActivity.java — paste raw text, parse, persist to Room
 ```
 
@@ -52,7 +53,10 @@ Libro II
 - [x] `MeditationDao` (insertAll, deleteAll, getRandom, count)
 - [x] `AppDatabase` (singleton, wires entity + DAO together) — verified with an instrumented test on the emulator
 - [x] `MainActivity` — paste raw text, parse it, persist it to Room, confirm via Toast (verified end-to-end on the emulator)
-- [ ] `AppWidgetProvider` + `RemoteViews` layout
+- [x] Widget layout (`res/layout/widget_meditation.xml`) and metadata (`res/xml/widget_info.xml`)
+- [x] `MeditationWidgetProvider` — reads a random meditation via Room, updates the widget via `RemoteViews`
+- [ ] Declare the widget provider in `AndroidManifest.xml`
+- [ ] Verify the widget renders correctly on the home screen
 - [ ] Daily update scheduling (`WorkManager`)
 
 ## Requirements

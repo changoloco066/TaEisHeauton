@@ -68,6 +68,16 @@ Room needs two dependencies: `room-runtime` (implementation) and `room-compiler`
 
 `AppDatabase` uses a singleton pattern (`getInstance(Context)`, `synchronized`) to avoid creating multiple database connections. Requires `Context`, which will come from `MainActivity` or the widget's `AppWidgetProvider` when actually wired up.
 
+## Widget design notes
+
+`RemoteViews` limitation confirmed in practice: no direct `findViewById()`/View manipulation like a normal Activity. Widget layout must use only the supported subset (`TextView`, `LinearLayout`, etc.) — no guaranteed `ConstraintLayout` support across all Android versions. Updates go through `RemoteViews.setTextViewText(id, value)` and `AppWidgetManager.updateAppWidget(...)`, which sends the update to the launcher process rather than mutating a View directly in-process.
+
+`onUpdate(Context, AppWidgetManager, int[] appWidgetIds)` receives an array, not a single id, because a user can place multiple instances of the same widget on their home screen — each needs its own update.
+
+**Threading note, contrasted with `MainActivity`:** `dao.getRandom()` still needs a background thread (same Room rule as before), but unlike `Toast` in `MainActivity`, `appWidgetManager.updateAppWidget(...)` does *not* need `runOnUiThread(...)` — it's safe to call from any thread, since it just sends the update to the launcher process asynchronously rather than mutating UI in-process. This is an API-specific rule, not a general threading rule to assume everywhere.
+
+`updatePeriodMillis` in `widget_info.xml` is set as a placeholder (24h) but is not a reliable mechanism on its own — Android enforces a 30-minute minimum and doesn't guarantee exact timing (battery optimization). Real daily scheduling will come from `WorkManager` in the next phase.
+
 ## Status
 
 - [x] `Meditation` data model
@@ -77,11 +87,13 @@ Room needs two dependencies: `room-runtime` (implementation) and `room-compiler`
 - [x] Room dependency added (version catalog)
 - [x] `MeditationEntity`
 - [x] `MeditationDao` (insertAll, deleteAll, getRandom, count)
-- [ ] `AppDatabase` — written, not yet tested
-- [ ] Wire parser → entities → Room from `MainActivity`
-- [ ] `AppWidgetProvider` + `RemoteViews` layout
-- [ ] Daily update scheduling (`WorkManager`)
-- [ ] Import screen (`MainActivity`)
+- [x] `AppDatabase` — verified with an instrumented test on the emulator
+- [x] `MainActivity` — parser → entities → Room wired end-to-end, verified on emulator
+- [x] Widget layout + metadata XML
+- [x] `MeditationWidgetProvider` (onUpdate, RemoteViews, background thread for Room read)
+- [ ] Declare provider in `AndroidManifest.xml`
+- [ ] Verify widget renders on the home screen
+- [ ] `WorkManager` daily scheduling
 
 ## Open questions / decisions for later
 
