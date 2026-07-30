@@ -13,6 +13,7 @@
         android:gravity="top|start"
         android:hint="Pega aquí el texto de tus meditaciones"
         android:inputType="textMultiLine"
+        android:scrollbars="vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/importButton"
         app:layout_constraintStart_toStartOf="parent"

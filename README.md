@@ -42,6 +42,16 @@ Libro II
 
 `MeditationParser` reads the text line by line through a 3-state machine (`BEFORE_BOOKS`, `INSIDE_BOOK`, `INSIDE_ENTRY`), using two regex patterns to detect book headers (`Libro X`) and entry starts (`N.- text`). Multi-paragraph entries are accumulated in a `StringBuilder` until the next book/entry header (or end of input) closes them out. See `parser/RegexParserNotes.md` for a full breakdown of the regex patterns used.
 
+## Preparing your text before importing
+
+The parser expects a specific, consistent format. Before pasting your notes into the app, check for the following — the parser won't catch these automatically, and will silently produce wrong results rather than erroring out:
+
+- **Book headers must use real Roman numerals (I, V, X, L), uppercase.** A common typo is writing a lowercase `l` (letter L) instead of uppercase `I` — e.g. `"Libro ll"` instead of `"Libro II"`. Since these are different characters with no relationship to each other, the parser can't detect or correct this — it'll simply fail to recognize the line as a book header, and every entry after it (until the next valid header) will be attributed to book `0`.
+- **Each entry must start at the beginning of its own line**, formatted as `N.- text` or `N. - text` (a dash before or after a space is fine, but the entry can't start mid-paragraph). Text copied from a different source (PDF, web page) that collapses line breaks will cause multiple entries to be merged into one.
+- **Content after the last real entry (glossary, personal notes, etc.) is not excluded automatically.** If it directly follows your last numbered entry with no other book/entry header in between, it will get appended to that entry's text.
+
+If the widget shows an unexpected "Libro 0" or an entry with abnormally long/unrelated text, the most likely cause is one of the above — check the raw text for a malformed book header or leftover trailing content.
+
 ## Status
 
 - [x] `Meditation` data model
