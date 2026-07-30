@@ -78,6 +78,18 @@ Room needs two dependencies: `room-runtime` (implementation) and `room-compiler`
 
 `updatePeriodMillis` in `widget_info.xml` is set as a placeholder (24h) but is not a reliable mechanism on its own — Android enforces a 30-minute minimum and doesn't guarantee exact timing (battery optimization). Real daily scheduling will come from `WorkManager` in the next phase.
 
+## WorkManager design notes
+
+Added to guarantee the widget rotates to a new meditation periodically, since `updatePeriodMillis` in `widget_info.xml` alone is unreliable (Android enforces a 30-min minimum and doesn't guarantee exact timing due to battery optimization). WorkManager persists scheduled work in its own internal store, surviving app closure and device reboots.
+
+**`MeditationUpdateWorker`** doesn't duplicate the widget-refresh logic — it looks up all current widget IDs via `AppWidgetManager.getAppWidgetIds(componentName)` and calls straight into `MeditationWidgetProvider.onUpdate(...)`, so there's a single source of truth for "how a meditation gets fetched and displayed," used both by the system (when a widget is added) and by WorkManager (on the periodic schedule).
+
+**No manual `Thread` needed inside `Worker.doWork()`** — unlike `MainActivity` and `MeditationWidgetProvider`, WorkManager already runs `doWork()` off the main thread by design.
+
+**`enqueueUniquePeriodicWork("meditation-daily-update", ExistingPeriodicWorkPolicy.KEEP, request)`** instead of plain `enqueue(...)` — critical to avoid scheduling a duplicate periodic task every time `MainActivity.onCreate()` runs (i.e. every time the app is opened). `KEEP` means "if a task with this name already exists, leave it alone." Interval set to 12h (well above WorkManager's 15-minute minimum).
+
+**Bug caught and fixed:** an early version of the import flow had a `Toast.makeText(...)` call left *outside* the background `Thread`, in addition to the correct one inside `runOnUiThread(...)`. Since `Thread.start()` doesn't block, the stray outer Toast could fire before `dao.insertAll(...)` actually finished — a real race condition, not just harmless duplication. Removed; only the one inside `runOnUiThread`, after the insert completes, remains.
+
 ## Status
 
 - [x] `Meditation` data model
@@ -91,9 +103,14 @@ Room needs two dependencies: `room-runtime` (implementation) and `room-compiler`
 - [x] `MainActivity` — parser → entities → Room wired end-to-end, verified on emulator
 - [x] Widget layout + metadata XML
 - [x] `MeditationWidgetProvider` (onUpdate, RemoteViews, background thread for Room read)
-- [ ] Declare provider in `AndroidManifest.xml`
-- [ ] Verify widget renders on the home screen
-- [ ] `WorkManager` daily scheduling
+- [x] Provider declared in `AndroidManifest.xml`
+- [x] Widget verified rendering on the home screen (emulator)
+- [x] WorkManager dependency added (version catalog)
+- [x] `MeditationUpdateWorker` + periodic scheduling from `MainActivity` (12h, unique work, KEEP policy)
+- [ ] Widget refresh button (in progress)
+- [ ] `EditText` touch scroll fix (`ScrollingMovementMethod`) — identified, not yet applied
+- [ ] Full real text import + typo cleanup pass (book headers)
+- [ ] Widget visual polish (colors, layout) — deferred
 
 ## Open questions / decisions for later
 
