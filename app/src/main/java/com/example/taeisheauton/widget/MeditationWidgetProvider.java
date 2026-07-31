@@ -43,10 +43,21 @@ import com.example.taeisheauton.data.MeditationEntity;
                 MeditationDao dao = db.meditationDao();
                 MeditationEntity meditation = dao.getRandom();
 
-                String displayText = (meditation != null)
-                        ? "Libro " + meditation.book + ", " + meditation.number + ": " + meditation.text
-                        : "Aún no has importado meditaciones";
+                String displayText;
 
+                if (meditation != null) {
+                    String rawText = meditation.text;
+                    String shownText;
+
+                    if(rawText.length() > 150){
+                        shownText = rawText.substring(0, 150) + "...";
+                    }else{
+                        shownText = rawText;
+                    }
+                        displayText = "Libro " + meditation.book + ", " + meditation.number + ": " + shownText;
+                    } else {
+                        displayText = "Aún no has importado meditaciones";
+                    }
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_meditation);
                 views.setTextViewText(R.id.widgetText, displayText);
 
