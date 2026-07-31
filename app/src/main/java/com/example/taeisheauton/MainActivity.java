@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 dao.insertAll(entities);
 
                 runOnUiThread(() ->{
-                    Toast.makeText(this, "Se importaron " + entities.size() + "meditaciones", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Se importaron " + entities.size() + " meditaciones ", Toast.LENGTH_SHORT).show();
                 });
             }).start();
         });
