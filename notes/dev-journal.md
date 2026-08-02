@@ -90,6 +90,10 @@ Added to guarantee the widget rotates to a new meditation periodically, since `u
 
 **Bug caught and fixed:** an early version of the import flow had a `Toast.makeText(...)` call left *outside* the background `Thread`, in addition to the correct one inside `runOnUiThread(...)`. Since `Thread.start()` doesn't block, the stray outer Toast could fire before `dao.insertAll(...)` actually finished — a real race condition, not just harmless duplication. Removed; only the one inside `runOnUiThread`, after the insert completes, remains.
 
+**Widget text truncation:** long meditations were pushing the refresh button off-screen (widgets have fixed, limited size — unlike an Activity, there's no scroll available for a plain `TextView` inside `RemoteViews`). Fixed by capping displayed text at 150 characters, appending `"..."` when cut. The null-check for `meditation` had to wrap the truncation logic too, not just the final `displayText` line — an earlier attempt read `meditation.text` before the null check and would have crashed with `NullPointerException` on a fresh install with no imported data yet.
+
+**Lock screen widgets — researched, not implemented (nothing to implement):** Android removed native lock-screen widget support in 5.0 (2014); it's returning in Android 16 (2026) as an opt-in swipeable panel, but availability depends entirely on OS version — this is a platform/OS-level feature, not something the app's code controls. Samsung's One UI has historically had its own independent lock-screen widget support in some versions, separate from stock Android's timeline. No code changes are needed either way: any standard `AppWidgetProvider` (like this project's) is automatically eligible if/when the OS or OEM skin supports placing it there.
+
 ## Status
 
 - [x] `Meditation` data model
@@ -107,10 +111,13 @@ Added to guarantee the widget rotates to a new meditation periodically, since `u
 - [x] Widget verified rendering on the home screen (emulator)
 - [x] WorkManager dependency added (version catalog)
 - [x] `MeditationUpdateWorker` + periodic scheduling from `MainActivity` (12h, unique work, KEEP policy)
-- [ ] Widget refresh button (in progress)
+- [x] Widget refresh button (`onReceive` + custom `ACTION_REFRESH` + `PendingIntent`)
+- [x] Widget text truncation (150 chars) to prevent long entries from covering the refresh button
 - [ ] `EditText` touch scroll fix (`ScrollingMovementMethod`) — identified, not yet applied
+- [ ] Tap-to-expand full text (dialog-themed Activity) — planned, not started
 - [ ] Full real text import + typo cleanup pass (book headers)
-- [ ] Widget visual polish (colors, layout) — deferred
+- [ ] Widget visual polish (colors, layout, possibly a vector drawable icon) — deferred
+- [ ] Install and test on physical device (currently emulator-only)
 
 ## Open questions / decisions for later
 
