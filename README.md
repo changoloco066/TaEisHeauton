@@ -63,11 +63,13 @@ If the widget shows an unexpected "Libro 0" or an entry with abnormally long/unr
 - [x] `MeditationDao` (insertAll, deleteAll, getRandom, count)
 - [x] `AppDatabase` (singleton, wires entity + DAO together) — verified with an instrumented test on the emulator
 - [x] `MainActivity` — paste raw text, parse it, persist it to Room, confirm via Toast (verified end-to-end on the emulator)
-- [x] Widget layout (`res/layout/widget_meditation.xml`) and metadata (`res/xml/widget_info.xml`)
 - [x] `MeditationWidgetProvider` — reads a random meditation via Room, updates the widget via `RemoteViews`
-- [ ] Declare the widget provider in `AndroidManifest.xml`
-- [ ] Verify the widget renders correctly on the home screen
-- [ ] Daily update scheduling (`WorkManager`)
+- [x] Widget declared in `AndroidManifest.xml`, verified rendering on the home screen
+- [x] `WorkManager` periodic updates (every 12h, survives app/device restarts)
+- [x] Widget refresh button — manually fetch a new meditation without waiting for the scheduled update
+- [x] Widget text truncation — long entries no longer push the refresh button off-screen
+- [ ] Tap-to-expand full text (planned: dialog-themed Activity for untruncated reading)
+- [ ] `EditText` touch scroll fix in the import screen
 
 ## Requirements
 
