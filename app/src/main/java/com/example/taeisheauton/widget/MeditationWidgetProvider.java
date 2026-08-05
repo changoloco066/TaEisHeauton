@@ -70,4 +70,5 @@ import com.example.taeisheauton.data.MeditationEntity;
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             }).start();
         }
+
     }
