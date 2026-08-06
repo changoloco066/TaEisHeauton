@@ -18,9 +18,11 @@ com/example/taeisheauton/
 │   └── MeditationParser.java — line-by-line state machine parser
 ├── util/           → RomanNumeralConverter.java — roman numeral to int conversion
 ├── data/           → Room persistence: MeditationEntity, MeditationDao, AppDatabase
-├── widget/         → MeditationWidgetProvider.java — reads a random meditation
-│                      from Room and updates the widget via RemoteViews
-└── ui/             → MainActivity.java — paste raw text, parse, persist to Room
+├── widget/         → MeditationWidgetProvider.java, MeditationUpdateWorker.java
+│                      — reads a random meditation from Room and updates the
+│                      widget via RemoteViews; periodic refresh via WorkManager
+└── ui/             → MainActivity.java (paste/import), MeditationDetailActivity.java
+                       (dialog-themed screen for the full, untruncated text)
 ```
 
 Each package has a single responsibility, mirroring the structure used in [DukeQuill](../dukequill), an earlier Java spell-checker project.
@@ -68,8 +70,9 @@ If the widget shows an unexpected "Libro 0" or an entry with abnormally long/unr
 - [x] `WorkManager` periodic updates (every 12h, survives app/device restarts)
 - [x] Widget refresh button — manually fetch a new meditation without waiting for the scheduled update
 - [x] Widget text truncation — long entries no longer push the refresh button off-screen
-- [ ] Tap-to-expand full text (planned: dialog-themed Activity for untruncated reading)
-- [ ] `EditText` touch scroll fix in the import screen
+- [x] `EditText` touch scroll working in the import screen
+- [x] Tap-to-expand: tapping the widget text opens a dialog-themed Activity with the full, untruncated meditation
+- [ ] Scrollable detail dialog (currently overflows with no scroll on very long text)
 
 ## Requirements
 

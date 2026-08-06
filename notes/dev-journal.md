@@ -23,8 +23,9 @@ com/example/taeisheauton/
 ├── parser/         → MeditationParser.java, ParserState.java — text → Meditation
 ├── util/           → RomanNumeralConverter.java — roman numeral to int
 ├── data/           → MeditationEntity.java, MeditationDao.java, AppDatabase.java (Room)
-├── widget/         → (planned) AppWidgetProvider, RemoteViews layout, update logic
-└── ui/             → (planned) MainActivity — screen to paste/import raw text
+├── widget/         → MeditationWidgetProvider.java, MeditationUpdateWorker.java
+└── ui/             → MainActivity.java (root package, by wizard convention),
+                       MeditationDetailActivity.java
 ```
 
 **Core principle followed throughout:** separate *data* (nouns — things that just exist, no behavior) from *process* (verbs — things that transform/compute). Mirrors DukeQuill's separation of `Token`/`TokenType` (data) from `Lexer` (process).
@@ -94,6 +95,16 @@ Added to guarantee the widget rotates to a new meditation periodically, since `u
 
 **Lock screen widgets — researched, not implemented (nothing to implement):** Android removed native lock-screen widget support in 5.0 (2014); it's returning in Android 16 (2026) as an opt-in swipeable panel, but availability depends entirely on OS version — this is a platform/OS-level feature, not something the app's code controls. Samsung's One UI has historically had its own independent lock-screen widget support in some versions, separate from stock Android's timeline. No code changes are needed either way: any standard `AppWidgetProvider` (like this project's) is automatically eligible if/when the OS or OEM skin supports placing it there.
 
+## Tap-to-expand design notes
+
+`MeditationDao.getById(int id)` added — until now the DAO only had `getRandom()`, no way to target a specific row. Room's named-parameter binding (`WHERE id = :id`) auto-connects to the method's `int id` parameter by name, no manual binding code needed.
+
+`MeditationDetailActivity` lives in `ui/` (moved from an initial, incorrect placement in `widget/` — it's a screen, not widget-refresh logic, same reasoning as keeping `Meditation` separate from `MeditationEntity`). Uses `PendingIntent.getActivity(...)` (not `getBroadcast`, which is for the refresh button) since it opens a full Activity, not a broadcast to the provider itself. The meditation id travels via `Intent.putExtra("meditation_id", meditation.id)`, read back with `getIntent().getIntExtra(...)`.
+
+**Bug found and fixed:** launching the detail Activity from the widget with `FLAG_ACTIVITY_NEW_TASK` alone caused `MainActivity` to resurface behind the dialog — both activities shared the same default `taskAffinity` (derived from the package name), so Android reused `MainActivity`'s existing task instead of creating an isolated one. Fixed with `android:taskAffinity=""` on `MeditationDetailActivity` in the manifest, plus `android:excludeFromRecents="true"` since it's a transient popup. Added `backgroundDimAmount` to the dialog theme so the popup stands out visually now that the app underneath is properly hidden.
+
+**Known gap, not yet fixed:** long text (e.g. glossary content bleeding into the parser's last real entry — a known parser limitation, not new) can overflow the fixed-size dialog with no scroll. Fix identified (wrap the layout in a `ScrollView` with `maxHeight`), not yet applied.
+
 ## Status
 
 - [x] `Meditation` data model
@@ -102,7 +113,7 @@ Added to guarantee the widget rotates to a new meditation periodically, since `u
 - [x] JUnit test with real assertions
 - [x] Room dependency added (version catalog)
 - [x] `MeditationEntity`
-- [x] `MeditationDao` (insertAll, deleteAll, getRandom, count)
+- [x] `MeditationDao` (insertAll, deleteAll, getRandom, count, getById)
 - [x] `AppDatabase` — verified with an instrumented test on the emulator
 - [x] `MainActivity` — parser → entities → Room wired end-to-end, verified on emulator
 - [x] Widget layout + metadata XML
@@ -113,9 +124,10 @@ Added to guarantee the widget rotates to a new meditation periodically, since `u
 - [x] `MeditationUpdateWorker` + periodic scheduling from `MainActivity` (12h, unique work, KEEP policy)
 - [x] Widget refresh button (`onReceive` + custom `ACTION_REFRESH` + `PendingIntent`)
 - [x] Widget text truncation (150 chars) to prevent long entries from covering the refresh button
-- [ ] `EditText` touch scroll fix (`ScrollingMovementMethod`) — identified, not yet applied
-- [ ] Tap-to-expand full text (dialog-themed Activity) — planned, not started
-- [ ] Full real text import + typo cleanup pass (book headers)
+- [x] `EditText` touch scroll (`ScrollingMovementMethod` already present; import cleaned up)
+- [x] Tap-to-expand: `MeditationDetailActivity` (dialog-themed, isolated task, background dim)
+- [ ] `ScrollView` for the detail dialog (identified, not applied)
+- [ ] Full real text import + typo cleanup pass (book headers, trailing glossary/notes content)
 - [ ] Widget visual polish (colors, layout, possibly a vector drawable icon) — deferred
 - [ ] Install and test on physical device (currently emulator-only)
 
