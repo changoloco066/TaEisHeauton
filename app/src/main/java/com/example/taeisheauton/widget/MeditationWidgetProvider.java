@@ -12,8 +12,9 @@ import com.example.taeisheauton.R;
 import com.example.taeisheauton.data.AppDatabase;
 import com.example.taeisheauton.data.MeditationDao;
 import com.example.taeisheauton.data.MeditationEntity;
+import com.example.taeisheauton.ui.MeditationDetailActivity;
 
-    public class MeditationWidgetProvider extends AppWidgetProvider {
+public class MeditationWidgetProvider extends AppWidgetProvider {
 
         public static final String ACTION_REFRESH = "com.example.taeisheauton.widget.ACTION_REFRESH";
 
@@ -67,6 +68,16 @@ import com.example.taeisheauton.data.MeditationEntity;
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 views.setOnClickPendingIntent(R.id.refreshButton, pendingIntent);
 
+                if(meditation != null){
+                    Intent detailIntent = new Intent(context, MeditationDetailActivity.class);
+                    detailIntent.putExtra("meditation_id", meditation.id);
+                    detailIntent.setFlags(detailIntent.FLAG_ACTIVITY_NEW_TASK);
+
+                    PendingIntent detailPendingIntent = PendingIntent.getActivity(
+                      context, appWidgetId, detailIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                    );
+                    views.setOnClickPendingIntent(R.id.widgetText, detailPendingIntent);
+                }
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             }).start();
         }

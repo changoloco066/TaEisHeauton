@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+import android.text.method.ScrollingMovementMethod;
 
 import com.example.taeisheauton.data.AppDatabase;
 import com.example.taeisheauton.data.MeditationDao;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         EditText inputText = findViewById(R.id.inputText);
         Button importButton = findViewById(R.id.importButton);
-        inputText.setMovementMethod(new android.text.method.ScrollingMovementMethod());
+        inputText.setMovementMethod(new ScrollingMovementMethod());
 
         importButton.setOnClickListener(v -> {
             String text = inputText.getText().toString();

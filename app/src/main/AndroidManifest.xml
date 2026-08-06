@@ -21,6 +21,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.MeditationDetailActivity"
+            android:theme="@style/Theme.TaEisHeauton.Dialog"
+            android:exported="false" />
+
         <receiver
             android:name=".widget.MeditationWidgetProvider"
             android:exported="false">

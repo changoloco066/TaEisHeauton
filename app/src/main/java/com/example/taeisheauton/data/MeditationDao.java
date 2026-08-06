@@ -20,4 +20,7 @@ public interface MeditationDao {
 
     @Query("SELECT COUNT(*) FROM meditations")
     int count();
+
+    @Query("SELECT * FROM meditations WHERE id = :id")
+    MeditationEntity getById(int id);
 }
