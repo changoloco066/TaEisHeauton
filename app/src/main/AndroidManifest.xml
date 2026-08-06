@@ -24,7 +24,10 @@
         <activity
             android:name=".ui.MeditationDetailActivity"
             android:theme="@style/Theme.TaEisHeauton.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            />
 
         <receiver
             android:name=".widget.MeditationWidgetProvider"
