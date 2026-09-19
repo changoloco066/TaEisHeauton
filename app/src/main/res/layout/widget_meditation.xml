@@ -3,28 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="8dp"
     android:background="#1A1A1A">
 
     <TextView
         android:id="@+id/widgetText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
-        android:gravity="center"
-        android:text="Cargando..." />
+        android:text="@string/loading" />
 
     <ImageButton
         android:id="@+id/refreshButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:src="@drawable/outline_autorenew_24"
         android:background="@android:color/transparent"
-        app:tint="@android:color/white"
-        android:contentDescription="Refrescar" />
+        app:tint="@android:color/white" />
 
 </LinearLayout>
+
+
+

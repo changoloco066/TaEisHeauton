@@ -47,18 +47,10 @@ public class MeditationWidgetProvider extends AppWidgetProvider {
                 String displayText;
 
                 if (meditation != null) {
-                    String rawText = meditation.text;
-                    String shownText;
-
-                    if(rawText.length() > 150){
-                        shownText = rawText.substring(0, 150) + "...";
-                    }else{
-                        shownText = rawText;
-                    }
-                        displayText = "Libro " + meditation.book + ", " + meditation.number + ": " + shownText;
-                    } else {
-                        displayText = "Aún no has importado meditaciones";
-                    }
+                    displayText = "Libro " + meditation.book + '\n' + meditation.number + ".- ... ";
+                } else {
+                    displayText = "Aún no has importado meditaciones";
+                }
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_meditation);
                 views.setTextViewText(R.id.widgetText, displayText);
 
