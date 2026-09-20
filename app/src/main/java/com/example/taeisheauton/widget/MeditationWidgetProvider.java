@@ -44,15 +44,19 @@ public class MeditationWidgetProvider extends AppWidgetProvider {
                 MeditationDao dao = db.meditationDao();
                 MeditationEntity meditation = dao.getRandom();
 
-                String displayText;
+                String bookText;
+                String numberText;
 
                 if (meditation != null) {
-                    displayText = "Libro " + meditation.book + '\n' + meditation.number + ".- ... ";
+                    bookText = "Libro " + meditation.book;
+                    numberText = meditation.number + ".-";
                 } else {
-                    displayText = "Aún no has importado meditaciones";
+                    bookText = context.getString(R.string.no_meditations);
+                    numberText = " ";
                 }
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_meditation);
-                views.setTextViewText(R.id.widgetText, displayText);
+                views.setTextViewText(R.id.widgetBookText, bookText);
+                views.setTextViewText(R.id.widgetNumberText, numberText);
 
                 Intent refreshIntent = new Intent(context, MeditationWidgetProvider.class);
                 refreshIntent.setAction(ACTION_REFRESH);
@@ -68,10 +72,10 @@ public class MeditationWidgetProvider extends AppWidgetProvider {
                     PendingIntent detailPendingIntent = PendingIntent.getActivity(
                       context, appWidgetId, detailIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                     );
-                    views.setOnClickPendingIntent(R.id.widgetText, detailPendingIntent);
+                    views.setOnClickPendingIntent(R.id.widgetBookText, detailPendingIntent);
+                    views.setOnClickPendingIntent(R.id.widgetNumberText, detailPendingIntent);
                 }
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             }).start();
         }
-
     }

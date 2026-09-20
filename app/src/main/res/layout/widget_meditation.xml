@@ -5,27 +5,42 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="8dp"
-    android:background="#1A1A1A">
+    android:padding="12dp"
+    android:background="@drawable/widget_background">
 
-    <TextView
-        android:id="@+id/widgetText"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:text="@string/loading" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widgetBookText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:text="@string/loading" />
+
+        <TextView
+            android:id="@+id/widgetNumberText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#B3FFFFFF"
+            android:textSize="13sp"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/refreshButton"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="7dp"
         android:src="@drawable/outline_autorenew_24"
-        android:background="@android:color/transparent"
-        app:tint="@android:color/white" />
+        android:background="@drawable/refresh_button_background"
+        app:tint="@android:color/white"
+        android:contentDescription="@string/refresh" />
 
 </LinearLayout>
-
-
-
