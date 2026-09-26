@@ -16,10 +16,14 @@ import com.example.taeisheauton.data.MeditationEntity;
 import com.example.taeisheauton.model.Meditation;
 import com.example.taeisheauton.parser.MeditationParser;
 import com.example.taeisheauton.widget.MeditationUpdateWorker;
+import com.example.taeisheauton.data.SourceDao;
+import com.example.taeisheauton.data.SourceEntity;
+import com.example.taeisheauton.data.SourceType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         ).build();
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-          "meditation-daily-update",
-          androidx.work.ExistingPeriodicWorkPolicy.KEEP, updateRequest
+                "meditation-daily-update",
+                androidx.work.ExistingPeriodicWorkPolicy.KEEP, updateRequest
         );
 
         EditText inputText = findViewById(R.id.inputText);
@@ -44,20 +48,29 @@ public class MainActivity extends AppCompatActivity {
             String text = inputText.getText().toString();
             MeditationParser parser = new MeditationParser();
             List<Meditation> meditations = parser.parse(text);
-            List<MeditationEntity> entities = new ArrayList<>();
-
-            for(Meditation meditation : meditations){
-                entities.add(new MeditationEntity(meditation));
-            }
 
             AppDatabase db = AppDatabase.getInstance(this);
-            MeditationDao dao= db.meditationDao();
-            new Thread(() ->{
-                dao.deleteAll();
-                dao.insertAll(entities);
+            MeditationDao meditationDao = db.meditationDao();
+            SourceDao sourceDao = db.sourceDao();
 
-                runOnUiThread(() ->{
-                    Toast.makeText(this, "Se importaron " + entities.size() + " meditaciones ", Toast.LENGTH_SHORT).show();
+            new Thread(() -> {
+                String sourceName = "Texto pegado - " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date());
+                SourceEntity newSource = new SourceEntity(sourceName, SourceType.PASTE, true, System.currentTimeMillis());
+
+                sourceDao.deactivateAll();
+                long newSourceId = sourceDao.insert(newSource);
+
+                List<MeditationEntity> entities = new ArrayList<>();
+                for (Meditation meditation : meditations) {
+                    MeditationEntity entity = new MeditationEntity(meditation);
+                    entity.sourceId = (int) newSourceId;
+                    entities.add(entity);
+                }
+
+                meditationDao.insertAll(entities);
+
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Se importaron " + entities.size() + " meditaciones", Toast.LENGTH_SHORT).show();
                 });
             }).start();
         });

@@ -18,6 +18,9 @@ public interface MeditationDao {
     @Query("SELECT * FROM meditations ORDER BY RANDOM() LIMIT 1")
     MeditationEntity getRandom();
 
+    @Query("SELECT * FROM meditations WHERE sourceId = :sourceId ORDER BY RANDOM() LIMIT 1")
+    MeditationEntity getRandomFromSource(int sourceId);
+
     @Query("SELECT COUNT(*) FROM meditations")
     int count();
 

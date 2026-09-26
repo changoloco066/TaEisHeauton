@@ -11,6 +11,7 @@ public class MeditationEntity{
     public int book;
     public int number;
     public String text;
+    public int sourceId;
 
     public MeditationEntity(){
 

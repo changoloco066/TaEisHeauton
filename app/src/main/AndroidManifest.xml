@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TaEisHeauton">
         <activity
+            android:name=".ui.SourceListActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -20,14 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.MeditationDetailActivity"
-            android:theme="@style/Theme.TaEisHeauton.Dialog"
+            android:excludeFromRecents="true"
             android:exported="false"
             android:taskAffinity=""
-            android:excludeFromRecents="true"
-            />
+            android:theme="@style/Theme.TaEisHeauton.Dialog" />
 
         <receiver
             android:name=".widget.MeditationWidgetProvider"
@@ -35,6 +36,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />

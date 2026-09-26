@@ -12,7 +12,11 @@ import com.example.taeisheauton.R;
 import com.example.taeisheauton.data.AppDatabase;
 import com.example.taeisheauton.data.MeditationDao;
 import com.example.taeisheauton.data.MeditationEntity;
+import com.example.taeisheauton.data.SourceEntity;
 import com.example.taeisheauton.ui.MeditationDetailActivity;
+import com.example.taeisheauton.data.SourceDao;
+import com.example.taeisheauton.data.SourceEntity;
+
 
 public class MeditationWidgetProvider extends AppWidgetProvider {
 
@@ -41,8 +45,16 @@ public class MeditationWidgetProvider extends AppWidgetProvider {
         private void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
             new Thread(() -> {
                 AppDatabase db = AppDatabase.getInstance(context);
-                MeditationDao dao = db.meditationDao();
-                MeditationEntity meditation = dao.getRandom();
+                MeditationDao meditationDao = db.meditationDao();
+                SourceDao sourceDao = db.sourceDao();
+
+                SourceEntity activeSource = sourceDao.getActive();
+                MeditationEntity meditation = null;
+
+                if(activeSource != null){
+                    meditation = meditationDao.getRandomFromSource(activeSource.id);
+
+                }
 
                 String bookText;
                 String numberText;
