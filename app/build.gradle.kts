@@ -44,4 +44,7 @@ dependencies {
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
     implementation(libs.work.runtime)
+    implementation(libs.recyclerview)
+    implementation(libs.coordinatorlayout)
+    implementation(libs.pdfbox.android)
 }
