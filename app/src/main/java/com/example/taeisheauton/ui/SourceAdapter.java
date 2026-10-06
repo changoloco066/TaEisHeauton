@@ -10,15 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taeisheauton.R;
+import com.example.taeisheauton.data.SourceEntity;
 
 import java.util.List;
 
 public class SourceAdapter extends RecyclerView.Adapter<SourceAdapter.SourceViewHolder> {
 
-    private List<SourceItem> sources;
+    public interface OnSourceActionListener {
+        void onActivate(SourceEntity source);
+        void onDelete(SourceEntity source);
+    }
 
-    public SourceAdapter(List<SourceItem> sources) {
+    private List<SourceEntity> sources;
+    private OnSourceActionListener listener;
+
+    public SourceAdapter(List<SourceEntity> sources, OnSourceActionListener listener) {
         this.sources = sources;
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,9 +39,12 @@ public class SourceAdapter extends RecyclerView.Adapter<SourceAdapter.SourceView
 
     @Override
     public void onBindViewHolder(@NonNull SourceViewHolder holder, int position) {
-        SourceItem source = sources.get(position);
+        SourceEntity source = sources.get(position);
         holder.sourceNameText.setText(source.name);
         holder.activateButton.setText(source.isActive ? "Activa" : "Activar");
+
+        holder.activateButton.setOnClickListener(v -> listener.onActivate(source));
+        holder.deleteButton.setOnClickListener(v -> listener.onDelete(source));
     }
 
     @Override

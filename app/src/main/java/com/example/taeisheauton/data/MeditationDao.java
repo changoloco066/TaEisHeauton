@@ -26,4 +26,9 @@ public interface MeditationDao {
 
     @Query("SELECT * FROM meditations WHERE id = :id")
     MeditationEntity getById(int id);
+
+    @Query("DELETE FROM meditations WHERE sourceID = :sourceID")
+    void deleteBySource(int sourceID);
+
+
 }

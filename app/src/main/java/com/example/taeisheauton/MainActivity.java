@@ -1,5 +1,6 @@
 package com.example.taeisheauton;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import com.example.taeisheauton.widget.MeditationUpdateWorker;
 import com.example.taeisheauton.data.SourceDao;
 import com.example.taeisheauton.data.SourceEntity;
 import com.example.taeisheauton.data.SourceType;
+import com.example.taeisheauton.ui.SourceListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Se importaron " + entities.size() + " meditaciones", Toast.LENGTH_SHORT).show();
                 });
             }).start();
+        });
+
+        Button sourceListButton = findViewById(R.id.sourceListButton);
+        sourceListButton.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, SourceListActivity.class));
         });
     }
 }
