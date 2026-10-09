@@ -45,6 +45,11 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Libro por defecto: se carga la primera vez que la app arranca con la BD vacía.
+    // Nota: contenido con posibles derechos de autor; solo para uso personal/pruebas.
+    private static final String DEFAULT_BOOK_ASSET = "Meditaciones-Marco-Aurelio.pdf";
+    private static final String DEFAULT_BOOK_NAME = "libroMeditaciones(default)";
+
     private SourceCardAdapter cardAdapter;
     private TextView emptyStateText;
     private SourceDao sourceDao;
@@ -75,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         sourceDao = db.sourceDao();
 
         PDFBoxResourceLoader.init(getApplicationContext());
+
+        loadDefaultBookIfNeeded();
 
         MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
         topAppBar.inflateMenu(R.menu.main_menu);
@@ -218,6 +225,40 @@ public class MainActivity extends AppCompatActivity {
     private void importPastedText(String text) {
         importFromText(text, SourceType.PASTE,
                 "Texto pegado - " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date()));
+    }
+
+    // Carga el libro por defecto la primera vez (solo si la BD está vacía).
+    private void loadDefaultBookIfNeeded() {
+        new Thread(() -> {
+            try {
+                if (!sourceDao.getAll().isEmpty()) {
+                    return;
+                }
+                String text;
+                try (java.io.InputStream in = getAssets().open(DEFAULT_BOOK_ASSET);
+                     PDDocument doc = PDDocument.load(in)) {
+                    text = new PDFTextStripper().getText(doc);
+                }
+                MeditationParser parser = new MeditationParser();
+                List<Meditation> meditations = parser.parse(text);
+
+                SourceEntity newSource = new SourceEntity(DEFAULT_BOOK_NAME, SourceType.PDF, true, System.currentTimeMillis());
+                sourceDao.deactivateAll();
+                long newSourceId = sourceDao.insert(newSource);
+
+                List<MeditationEntity> entities = new ArrayList<>();
+                for (Meditation m : meditations) {
+                    MeditationEntity e = new MeditationEntity(m);
+                    e.sourceId = (int) newSourceId;
+                    entities.add(e);
+                }
+                meditationDao.insertAll(entities);
+
+                runOnUiThread(this::loadSources);
+            } catch (Exception e) {
+                android.util.Log.e("DEFAULT_BOOK", "No se pudo cargar el libro por defecto", e);
+            }
+        }).start();
     }
 
 }
